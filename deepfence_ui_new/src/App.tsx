@@ -1,8 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+import Button from './components/button/Button';
 import Table from './components/table/CommonTable';
-import { Example } from './tests/components/Example';
+import theme from './theme/default';
+import { ThemeProvider } from './theme/ThemeContext';
 
 const queryClient = new QueryClient();
 
@@ -303,39 +305,53 @@ const SubRowComponent = ({ row }: any) => {
     />
   );
 };
+export const TableTest = () => (
+  <Table
+    data={data}
+    columns={columns}
+    config={{
+      isFullWidth: true,
+      isResizableColumn: true,
+      sortableColumn: {
+        isSortable: true,
+        columns: ['accid'],
+      },
+      pagination: {
+        isPagination: true,
+        placement: 'right-top',
+      },
+      selectable: {
+        isSelectable: true,
+        placement: 'end',
+      },
+      expanded: {
+        isRowExpanded: true,
+        column: 'subRow',
+      },
+      onRowClick: (row: any) => {
+        console.log('On Row Click:', row);
+      },
+    }}
+    renderRowSubComponent={({ row }: any) => <SubRowComponent row={row} />}
+  />
+);
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Example />
-      <Table
-        data={data}
-        columns={columns}
-        config={{
-          isFullWidth: true,
-          isResizableColumn: true,
-          sortableColumn: {
-            isSortable: true,
-            columns: ['accid'],
-          },
-          pagination: {
-            isPagination: true,
-            placement: 'right-top',
-          },
-          selectable: {
-            isSelectable: true,
-            placement: 'end',
-          },
-          expanded: {
-            isRowExpanded: true,
-            column: 'subRow',
-          },
-          onRowClick: (row: any) => {
-            console.log('On Row Click:', row);
-          },
-        }}
-        renderRowSubComponent={({ row }: any) => <SubRowComponent row={row} />}
-      />
+      <ThemeProvider value={{ theme }}>
+        <div
+          style={{
+            padding: 20,
+          }}
+        >
+          {/* <Example />
+        <TableTest /> */}
+          <Button color={'light'} size="xs" label="2">
+            Profile
+          </Button>
+        </div>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
