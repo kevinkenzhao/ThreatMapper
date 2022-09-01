@@ -1,8 +1,16 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { Fragment, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import Button from './components/button/Button';
+import { Card } from './components/card/Card';
+import { Checkbox } from './components/checkbox/Checkbox';
+import { TextInput } from './components/input/TextInput';
+import { Label } from './components/label/Label';
+import { Radio } from './components/radio/Radio';
+import RadixRadio from './components/radix-ui/RadioGroup';
 import Table from './components/table/CommonTable';
+import { ToggleSwitch } from './components/toggle-switch/ToggleSwitch';
 import theme from './theme/default';
 import { ThemeProvider } from './theme/ThemeContext';
 
@@ -337,6 +345,7 @@ export const TableTest = () => (
 );
 
 function App() {
+  const [toggleSwitch, setToggleSwitch] = useState(false);
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={{ theme }}>
@@ -350,6 +359,78 @@ function App() {
           <Button color={'light'} size="xs" label="2">
             Profile
           </Button>
+
+          <TextInput
+            placeholder="name@flowbite.com"
+            required={true}
+            icon={() => <span>hi</span>}
+            addon="@"
+            helperText={
+              <Fragment>
+                <span className="font-medium">Alright!</span> Username available!
+              </Fragment>
+            }
+            shadow={true}
+            type="text"
+            sizing="lg"
+          />
+          <div className="flex items-center py-2 gap-2">
+            <Checkbox id="disabled" disabled={true} />
+            <Label htmlFor="disabled" disabled={true}>
+              Eligible for international shipping (disabled)
+            </Label>
+          </div>
+          <div className="flex items-center py-2 gap-2">
+            <Radio id="united-state" name="countries" value="USA" defaultChecked={true} />
+            <Label htmlFor="united-state">United States</Label>
+          </div>
+          <div className="flex items-center py-2 gap-2">
+            <Radio id="germany" name="countries" value="Germany" />
+            <Label htmlFor="germany">Germany</Label>
+          </div>
+          <div className="flex flex-col gap-4" id="toggle">
+            <ToggleSwitch
+              checked={toggleSwitch}
+              label="Toggle me"
+              onChange={() => setToggleSwitch(!toggleSwitch)}
+            />
+            <ToggleSwitch
+              checked={toggleSwitch}
+              label="Toggle me (checked)"
+              onChange={() => 'Changed'}
+            />
+            <ToggleSwitch
+              checked={toggleSwitch}
+              disabled={true}
+              label="Toggle me (disabled)"
+              onChange={() => setToggleSwitch(!toggleSwitch)}
+            />
+          </div>
+          <Card>
+            <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Noteworthy technology acquisitions 2021
+            </h5>
+            <p className="font-normal text-gray-700 dark:text-gray-400">
+              Here are the biggest enterprise technology acquisitions of 2021 so far, in
+              reverse chronological order.
+            </p>
+            <Button>
+              Read more
+              <svg
+                className="ml-2 -mr-1 h-4 w-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </Button>
+          </Card>
+          <RadixRadio />
         </div>
       </ThemeProvider>
     </QueryClientProvider>

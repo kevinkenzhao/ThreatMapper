@@ -1,3 +1,7 @@
+import { HelperColors } from '../components/helper-text/HelperText';
+import { TextInputColors, TextInputSizes } from '../components/input/TextInput';
+import { LabelColors } from '../components/label/Label';
+
 export interface ComponentSizes {
   xs: string;
   sm: string;
@@ -69,6 +73,65 @@ export interface Theme extends Record<string, unknown> {
     outline: ThemeBoolean & {
       color: ButtonOutlineColors;
       pill: ThemeBoolean;
+    };
+  };
+  textInput: {
+    base: string;
+    addon: string;
+    field: {
+      base: string;
+      icon: {
+        base: string;
+        svg: string;
+      };
+      input: {
+        base: string;
+        sizes: TextInputSizes;
+        colors: TextInputColors;
+        withIcon: ThemeBoolean;
+        withAddon: ThemeBoolean;
+        withShadow: ThemeBoolean;
+      };
+    };
+  };
+  helperText: {
+    base: string;
+    colors: HelperColors;
+  };
+  checkbox: {
+    base: string;
+  };
+  radio: {
+    base: string;
+  };
+  label: {
+    base: string;
+    colors: LabelColors;
+    disabled: string;
+  };
+  toggleSwitch: {
+    base: string;
+    active: ThemeBoolean;
+    toggle: {
+      base: string;
+      checked: ThemeBoolean;
+    };
+    label: string;
+  };
+  card: {
+    base: string;
+    children: string;
+    horizontal: {
+      off: string;
+      on: string;
+    };
+    href: string;
+    img: {
+      base: string;
+      horizontal: {
+        off: string;
+        on: string;
+      };
     };
   };
 }
