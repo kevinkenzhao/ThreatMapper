@@ -116,6 +116,7 @@ type ComplianceDoc struct {
 	RemediationScript     string `json:"remediation_script,omitempty"`
 	RemediationAnsible    string `json:"remediation_ansible,omitempty"`
 	RemediationPuppet     string `json:"remediation_puppet,omitempty"`
+	Resource              string `json:"resource"`
 	TestRationale         string `json:"test_rationale"`
 	TestSeverity          string `json:"test_severity"`
 	TestDesc              string `json:"test_desc"`
@@ -1059,7 +1060,7 @@ func ingestInBackground(docType string, body []byte) error {
 		}
 		bulkService := elastic.NewBulkService(esClient)
 		for _, complianceDoc := range complianceDocs {
-			docId := fmt.Sprintf("%x", md5.Sum([]byte(complianceDoc.ScanId+complianceDoc.TestNumber)))
+			docId := fmt.Sprintf("%x", md5.Sum([]byte(complianceDoc.ScanId+complianceDoc.TestNumber+complianceDoc.Resource)))
 			complianceDoc.DocId = docId
 			event, err := json.Marshal(complianceDoc)
 			if err == nil {
