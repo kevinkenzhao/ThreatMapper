@@ -6,8 +6,8 @@ registry:
   name: "https://index.docker.io/v1/"
   # Set docker hub username and password provided by Deepfence
   # This will create a secret called "deepfence-docker-secret"
-  username: ""
-  password: ""
+  username: "saurabh2253"
+  password: "qwerty@123"
   # If kubernetes secret is already defined externally, change following value to false
   # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   createRegistrySecret: true
@@ -22,11 +22,11 @@ image:
   pullPolicy: Always
   pullSecretName: deepfence-docker-secret
 
-managementConsoleUrl: ""
+managementConsoleUrl: "142.93.216.241"
 managementConsolePort: "443"
 
 # Auth: Get deepfence api key from UI -> Settings -> User Management
-deepfenceKey: ""
+deepfenceKey: "2436a087-1925-4030-aa53-c28f73f858f4"
 # If kubernetes secret is already defined externally, change following value to false
 createDeepfenceKeySecret: true
 
@@ -40,10 +40,10 @@ userDefinedTags: ""
 # Example: prod-cluster or dev1-cluster
 # It will be suffixed with hostname - prod-cluster-aks-agentpool-123456-vmss000001
 # Required if kspm enabled
-clusterName: ""
+clusterName: "test-inside-agent"
 
 # Deploy KSPM
-deployKspm: false
+deployKspm: true
 
 enableGraphReport: true
 
