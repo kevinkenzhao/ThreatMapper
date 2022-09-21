@@ -2,6 +2,7 @@ import * as LabelPrimitive from '@radix-ui/react-label';
 import cx from 'classnames';
 import React, { ComponentProps, forwardRef, useId } from 'react';
 import { IconContext } from 'react-icons';
+import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../typography/Typography';
 import HelperText from './HelperText';
@@ -17,6 +18,7 @@ export interface TextInputProps
   color?: ColorType;
   label?: string;
   helperText?: string;
+  className?: string;
 }
 
 type IconProps = {
@@ -114,6 +116,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       endIcon,
       helperText,
       id,
+      className = '',
       ...rest
     },
     ref,
@@ -121,7 +124,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     const internalId = useId();
     const _id = id ? id : internalId;
     return (
-      <div className="flex flex-col gap-2">
+      <div className={twMerge('flex flex-col gap-2 w-full', className)}>
         {label && (
           <LabelPrimitive.Root
             htmlFor={_id}
