@@ -1,44 +1,47 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { createBrowserRouter, Route, RouterProvider, Routes } from 'react-router-dom';
 
-import { AuthProvider } from './components/routes/auth';
+import { authAction, authLoader, AuthProvider } from './components/routes/auth';
+import { rootAction, rootLoader } from './components/routes/home';
 import PrivateRoutes, { RootRouteError } from './components/routes/PrivateRoutes';
 import { ForgetPassword } from './pages/ForgetPassword';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { NotFound } from './pages/NotFound';
-import theme from './theme/default';
 import { ThemeProvider, useThemeMode } from './theme/ThemeContext';
 
-const queryClient = new QueryClient();
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />,
+    errorElement: <RootRouteError />,
+    loader: rootLoader,
+    action: rootAction,
+  },
+  {
+    path: '/login',
+    element: <Login />,
+    loader: authLoader,
+    action: authAction,
+  },
+  {
+    path: '/forget-password',
+    element: <ForgetPassword />,
+  },
+  {
+    path: '*',
+    element: <NotFound />,
+  },
+]);
 
 function App() {
   const { toggleMode } = useThemeMode(true);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={{ theme, toggleMode }}>
-        <div className="h-screen">
-          <Router>
-            <Routes>
-              <Route
-                element={
-                  <AuthProvider>
-                    <PrivateRoutes />
-                  </AuthProvider>
-                }
-                errorElement={<RootRouteError />}
-              >
-                <Route element={<Home />} path="/home" />
-              </Route>
-              <Route element={<Login />} path="/login" />
-              <Route element={<ForgetPassword />} path="/forget-password" />
-              <Route element={<NotFound />} path="*" />
-            </Routes>
-          </Router>
-        </div>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider value={{ toggleMode }}>
+      <div className="h-screen dark:bg-gray-900 bg-gray-200">
+        <RouterProvider router={router} />
+      </div>
+    </ThemeProvider>
   );
 }
 

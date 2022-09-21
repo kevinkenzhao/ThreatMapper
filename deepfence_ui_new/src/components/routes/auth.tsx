@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
+import { redirect } from 'react-router-dom';
 
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
@@ -31,3 +32,17 @@ export const AuthProvider = ({ children }: AuthProps) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+export const authLoader = async () => {
+  console.log('authLoader');
+};
+
+export const authAction = async ({ request, params }) => {
+  console.log('authAction: ');
+  const formData = await request.formData();
+  const firstName = formData.get('username');
+  const lastName = formData.get('password');
+  console.log('firstName: ', firstName);
+  console.log('lastName: ', lastName);
+  return redirect('/');
+};
