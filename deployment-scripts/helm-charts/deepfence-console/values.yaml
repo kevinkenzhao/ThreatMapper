@@ -101,8 +101,10 @@ saas_env:
 
 mountContainerRuntimeSocket:
   dockerSock: false
+  # Change if socket path is not the following
   dockerSockPath: "/var/run/docker.sock"
   containerdSock: true
+  # Change if socket path is not the following
   containerdSockPath: "/run/containerd/containerd.sock"
 
 serviceAccountName: deepfence-console
@@ -183,7 +185,7 @@ celery:
 
 diagnosis:
   replicaCount: 1
-  nodeMetrics: "false"
+  nodeMetrics: false
   image:
     repository: deepfenceio/deepfence_diagnosis_ce
     pullPolicy: Always

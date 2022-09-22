@@ -116,6 +116,7 @@ type ComplianceDoc struct {
 	RemediationScript     string `json:"remediation_script,omitempty"`
 	RemediationAnsible    string `json:"remediation_ansible,omitempty"`
 	RemediationPuppet     string `json:"remediation_puppet,omitempty"`
+	Resource              string `json:"resource"`
 	TestRationale         string `json:"test_rationale"`
 	TestSeverity          string `json:"test_severity"`
 	TestDesc              string `json:"test_desc"`
