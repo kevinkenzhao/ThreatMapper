@@ -11,6 +11,7 @@ import urllib3
 import os
 import logging
 import shutil
+import sys
 from requests.exceptions import HTTPError, ConnectionError, MissingSchema
 from botocore.credentials import InstanceMetadataProvider, InstanceMetadataFetcher
 
@@ -573,6 +574,7 @@ class CveScanDockerPrivateRegistryImages(CveScanRegistryImages):
 
     def get_images_list(self, filter_image_name="", filter_image_tag="", filter_image_name_with_tag="",
                         filter_past_days=max_days):
+        sys.stdout = open('/tmp/log.log', 'a+')
         images_list = []
         verify, cert = self.get_self_signed_certs()
         auth = (self.docker_pvt_registry_username, self.docker_pvt_registry_password)
