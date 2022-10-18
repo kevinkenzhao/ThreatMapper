@@ -21,6 +21,7 @@ def update_all_registry_images():
 @celery_app.task(bind=True)
 def update_registry_images(self, registry_id):
     sys.stdout = open('/tmp/log.log', 'a+')
+    print("test printing")
     with app.app_context():
         try:
             registry_credential = RegistryCredential.query.get(registry_id)
@@ -37,6 +38,8 @@ def update_registry_images(self, registry_id):
         filters_image_tag = set()
         try:
             node_utils = NodeUtils()
+            print("before calling get_images_list")
+            print(client)
             tmp_image_list = client.get_images_list()
             for image_detail in tmp_image_list:
                 image_detail["scope_id"] = image_detail["image_name_with_tag"] + ";<container_image>"
