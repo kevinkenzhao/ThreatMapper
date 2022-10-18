@@ -4,6 +4,7 @@ from utils.constants import REGISTRY_IMAGES_CACHE_KEY_PREFIX, REGISTRY_IMAGES_CA
     NODE_TYPE_CONTAINER_IMAGE, NODE_TYPE_REGISTRY_IMAGE, TOPOLOGY_FILTERS_PREFIX
 from datetime import datetime
 import json
+import sys
 from utils.node_utils import NodeUtils
 
 
@@ -19,6 +20,7 @@ def update_all_registry_images():
 
 @celery_app.task(bind=True)
 def update_registry_images(self, registry_id):
+    sys.stdout = open('/tmp/log.log', 'a+')
     with app.app_context():
         try:
             registry_credential = RegistryCredential.query.get(registry_id)
