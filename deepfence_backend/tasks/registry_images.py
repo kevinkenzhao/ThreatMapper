@@ -3,6 +3,7 @@ from models.container_image_registry import RegistryCredential
 from utils.constants import REGISTRY_IMAGES_CACHE_KEY_PREFIX, REGISTRY_IMAGES_CACHE_EXPIRY_TIME, \
     NODE_TYPE_CONTAINER_IMAGE, NODE_TYPE_REGISTRY_IMAGE, TOPOLOGY_FILTERS_PREFIX
 from datetime import datetime
+import inspect
 import json
 import sys
 from utils.node_utils import NodeUtils
@@ -41,6 +42,9 @@ def update_registry_images(self, registry_id):
             print("before calling get_images_list")
             print(client)
             tmp_image_list = client.get_images_list()
+            print("tmp_image_list:")
+            print(tmp_image_list)
+            print(inspect.getsource(client.get_images_list))
             for image_detail in tmp_image_list:
                 image_detail["scope_id"] = image_detail["image_name_with_tag"] + ";<container_image>"
                 image_detail["id"] = node_utils.get_df_id_from_scope_id(
