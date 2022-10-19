@@ -579,6 +579,7 @@ class CveScanDockerPrivateRegistryImages(CveScanRegistryImages):
         verify, cert = self.get_self_signed_certs()
         auth = (self.docker_pvt_registry_username, self.docker_pvt_registry_password)
         print("here1")
+        print(self.docker_pvt_registry_url)
         print(self.docker_pvt_registry_username)
         print(self.docker_pvt_registry_password)
         print(verify)
