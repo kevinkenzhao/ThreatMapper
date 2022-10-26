@@ -40,15 +40,15 @@ func (tc *TopologyClient) AddCompliances(cs []types.ComplianceDoc) error {
 	}
 	defer tx.Close()
 
-	if _, err = tx.Run("UNWIND $batch as row MERGE (n:Compliance{test_number:row.test_number}) SET n+= row", map[string]interface{}{"batch": types.CompliancesToMaps(cs)}); err != nil {
-		return err
-	}
-
-	if _, err = tx.Run("MATCH (n:Compliance) MERGE (m:KCluster{node_id: n.kubernetes_cluster_id}) MERGE (n) -[:SCANNED]-> (m)", map[string]interface{}{}); err != nil {
+	if _, err = tx.Run("UNWIND $batch as row MERGE (n:Compliance{node_id:row.node_id, test_number:row.test_number}) SET n+= row", map[string]interface{}{"batch": types.CompliancesToMaps(cs)}); err != nil {
 		return err
 	}
 
 	if _, err = tx.Run("MATCH (n:Compliance) MERGE (m:ComplianceScan{node_id: n.scan_id}) MERGE (m) -[:DETECTED]-> (n)", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:Compliance) MERGE (m:ComplianceScan{node_id: n.scan_id}) MERGE (l:KCluster{node_id: n.kubernetes_cluster_id}) MERGE (m) -[:SCANNED]-> (l)", map[string]interface{}{}); err != nil {
 		return err
 	}
 
@@ -81,10 +81,6 @@ func (tc *TopologyClient) AddCloudCompliances(cs []types.CloudComplianceDoc) err
 		return err
 	}
 
-	if _, err = tx.Run("MATCH (n:CloudCompliance) MERGE (m:CloudResource{node_id: n.arn}) MATCH (l:CloudComplianceScan{node_id:n.scan_id}) MERGE (l) -[:SCANNED]-> (m)", map[string]interface{}{}); err != nil {
-		return err
-	}
-
 	return tx.Commit()
 }
 
@@ -106,11 +102,11 @@ func (tc *TopologyClient) AddCVEs(cs []types.DfCveStruct) error {
 		return err
 	}
 
-	if _, err = tx.Run("MATCH (n:Cve) MERGE (m:CveScan{node_id: n.scan_id}) MERGE (m) -[:DETECTED]-> (n)", map[string]interface{}{}); err != nil {
+	if _, err = tx.Run("MATCH (n:Cve) MERGE (m:CveScan{node_id: n.scan_id, host_name:n.host_name}) MERGE (m) -[:DETECTED]-> (n)", map[string]interface{}{}); err != nil {
 		return err
 	}
 
-	if _, err = tx.Run("MATCH (n:CveScan) MERGE (m:TNode{node_id: n.node_name}) MERGE (n) -[:SCANNED]-> (m)", map[string]interface{}{}); err != nil {
+	if _, err = tx.Run("MATCH (n:CveScan) MERGE (m:TNode{node_id: n.host_name}) MERGE (n) -[:SCANNED]-> (m)", map[string]interface{}{}); err != nil {
 		return err
 	}
 
@@ -132,7 +128,7 @@ func (tc *TopologyClient) AddSecrets(cs []types.SecretStruct) error {
 	defer tx.Close()
 
 	// TODO
-	//rules := []map[string]interface{}{}
+	rules := []map[string]interface{}{}
 	secrets := []map[string]interface{}{}
 	for _, i := range cs {
 		secret := map[string]interface{}{}
@@ -142,19 +138,25 @@ func (tc *TopologyClient) AddSecrets(cs []types.SecretStruct) error {
 		for k, v := range i.Severity {
 			secret[k] = v
 		}
+
+		secret["rule_id"] = i.Rule["id"]
 		secrets = append(secrets, secret)
-		//rules = append(rules, i.Rule)
+		rules = append(rules, i.Rule)
 	}
 
-	if _, err = tx.Run("UNWIND $batch as row MERGE (n:Secret{node_id:row.id}) SET n+= row", map[string]interface{}{"batch": secrets}); err != nil {
+	if _, err = tx.Run("UNWIND $batch as row MERGE (n:Rule{node_id:row.id}) SET n+= row", map[string]interface{}{"batch": rules}); err != nil {
 		return err
 	}
 
-	if _, err = tx.Run("MATCH (n:Secret) MERGE (m:SecretScan{node_id: n.scan_id}) MERGE (m) -[:DETECTED]-> (n)", map[string]interface{}{}); err != nil {
+	if _, err = tx.Run("UNWIND $batch as row MERGE (n:Secret) SET n+= row WITH n MATCH (m:Rule{node_id:n.rule_id}) WITH m, n MERGE (n) -[:HAS]-> (m)", map[string]interface{}{"batch": secrets}); err != nil {
 		return err
 	}
 
-	if _, err = tx.Run("MATCH (n:CveScan) MERGE (m:TNode{node_id: n.node_name}) MERGE (n) -[:SCANNED]-> (m)", map[string]interface{}{}); err != nil {
+	if _, err = tx.Run("MATCH (n:Secret) MERGE (m:SecretScan{node_id: n.scan_id, host_name:n.host_name}) MERGE (m) -[:DETECTED]-> (n)", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:SecretScan) MERGE (m:TNode{node_id: n.host_name}) MERGE (n) -[:SCANNED]-> (m)", map[string]interface{}{}); err != nil {
 		return err
 	}
 

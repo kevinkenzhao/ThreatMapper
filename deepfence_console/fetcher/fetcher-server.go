@@ -895,6 +895,9 @@ func ingestInBackground(docType string, body []byte) error {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 	currTime := getCurrentTime()
+
+	log.Printf("docType = %v", docType)
+	log.Printf("body = %v", string(body))
 	if docType == cveIndexName {
 		var dfCveStructList []types.DfCveStruct
 		err := json.Unmarshal(body, &dfCveStructList)
@@ -1128,7 +1131,41 @@ func ingestInBackground(docType string, body []byte) error {
 		for _, r := range failed {
 			log.Printf("error cloudtrail-alert doc %s %s", r.Error.Type, r.Error.Reason)
 		}
+
+	} else if docType == "secret-scan" {
+		var secret types.SecretStruct
+		err := json.Unmarshal(body, &secret)
+		if err == nil {
+			client := topology.NewTopologyClient()
+			if client != nil {
+				err = client.AddSecrets([]types.SecretStruct{secret})
+				if err != nil {
+					log.Println("err secret " + err.Error())
+				} else {
+					log.Println("Added secret")
+				}
+			}
+		}
+		bulkService := elastic.NewBulkService(esClient)
+		bulkIndexReq := elastic.NewBulkIndexRequest()
+		bulkIndexReq.Index(docType).Doc(string(body))
+		bulkService.Add(bulkIndexReq)
+		res, _ := bulkService.Do(context.Background())
+		if res != nil && res.Errors {
+			for _, item := range res.Items {
+				resItem := item["index"]
+				if resItem != nil {
+					fmt.Println(resItem.Index)
+					fmt.Println("status:" + strconv.Itoa(resItem.Status))
+					if resItem.Error != nil {
+						fmt.Println("Error Type:" + resItem.Error.Type)
+						fmt.Println("Error Reason: " + resItem.Error.Reason)
+					}
+				}
+			}
+		}
 	} else {
+		log.Printf("else = %v", docType)
 		var secrets []types.SecretStruct
 		err := json.Unmarshal(body, &secrets)
 		if err == nil {
@@ -1137,6 +1174,22 @@ func ingestInBackground(docType string, body []byte) error {
 				err = client.AddSecrets(secrets)
 				if err != nil {
 					log.Println("err secrets " + err.Error())
+				} else {
+					log.Println("Added secrets")
+				}
+			}
+		} else {
+			var secret types.SecretStruct
+			err := json.Unmarshal(body, &secret)
+			if err == nil {
+				client := topology.NewTopologyClient()
+				if client != nil {
+					err = client.AddSecrets([]types.SecretStruct{secret})
+					if err != nil {
+						log.Println("err secret " + err.Error())
+					} else {
+						log.Println("Added secret")
+					}
 				}
 			}
 		}
