@@ -1551,7 +1551,7 @@ def register_kubernetes():
         }
     redis.hset(CLOUD_COMPLIANCE_SCAN_NODES_CACHE_KEY, post_data["node_id"], json.dumps(node))
     cloud_compliance_node = CloudComplianceNode.query.filter_by(node_id=kubernetes_id).first()
-    if not cloud_compliance_node or kubernetes_cluster_name != cloud_compliance_node.node_name:
+    if not cloud_compliance_node:
         cloud_compliance_node = CloudComplianceNode(
             node_id=kubernetes_id,
             node_name=kubernetes_cluster_name,
@@ -1563,6 +1563,8 @@ def register_kubernetes():
             app.logger.error("Duplicate cloud compliance kube node {}".format(e))
             print(e)
             raise InvalidUsage("Duplicate cloud compliance kube node")
+    elif kubernetes_cluster_name != cloud_compliance_node.node_name:
+        cloud_compliance_node.update_name(kubernetes_cluster_name)
 
     current_pending_scans_str = redis.hget(PENDING_CLOUD_COMPLIANCE_SCANS_KEY, kubernetes_id)
     if not current_pending_scans_str:

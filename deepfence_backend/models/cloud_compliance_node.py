@@ -25,6 +25,17 @@ class CloudComplianceNode(db.Model):
                 # So re raise it
                 raise
 
+    def update_name(self, name):
+        self.update(values={"node_name": name}, synchronize_session=False)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+
+            # Exception block is just for rolling back the transaction
+            # So re raise it
+            raise
+
     def delete(self, commit=True):
         db.session.delete(self)
         if commit:
