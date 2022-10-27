@@ -1551,7 +1551,7 @@ def register_kubernetes():
         }
     redis.hset(CLOUD_COMPLIANCE_SCAN_NODES_CACHE_KEY, post_data["node_id"], json.dumps(node))
     cloud_compliance_node = CloudComplianceNode.query.filter_by(node_id=kubernetes_id).first()
-    if not cloud_compliance_node:
+    if not cloud_compliance_node or kubernetes_cluster_name != cloud_compliance_node.node_name:
         cloud_compliance_node = CloudComplianceNode(
             node_id=kubernetes_id,
             node_name=kubernetes_cluster_name,
