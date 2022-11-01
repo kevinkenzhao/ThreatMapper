@@ -1,27 +1,41 @@
-import { createBrowserRouter, Route, RouterProvider, Routes } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { authAction, authLoader, AuthProvider } from './components/routes/auth';
+import { ErrorPage } from './components/error/ErrorPage';
+import { AuthProvider, loginAction } from './components/routes/auth';
 import { rootAction, rootLoader } from './components/routes/home';
 import PrivateRoutes, { RootRouteError } from './components/routes/PrivateRoutes';
 import { ForgetPassword } from './pages/ForgetPassword';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
-import { NotFound } from './pages/NotFound';
 import { ThemeProvider, useThemeMode } from './theme/ThemeContext';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Home />,
+    element: (
+      <AuthProvider>
+        <PrivateRoutes />
+      </AuthProvider>
+    ),
     errorElement: <RootRouteError />,
-    loader: rootLoader,
-    action: rootAction,
+    children: [
+      {
+        path: 'home',
+        element: <Home />,
+        loader: rootLoader,
+        action: rootAction,
+      },
+    ],
   },
   {
     path: '/login',
-    element: <Login />,
-    loader: authLoader,
-    action: authAction,
+    element: (
+      <AuthProvider>
+        <Login />
+      </AuthProvider>
+    ),
+    errorElement: <ErrorPage errorType="server" />,
+    action: loginAction,
   },
   {
     path: '/forget-password',
@@ -29,7 +43,7 @@ const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <NotFound />,
+    element: <ErrorPage errorType="notFound" />,
   },
 ]);
 

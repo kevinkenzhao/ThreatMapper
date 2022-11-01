@@ -1,40 +1,33 @@
 import cx from 'classnames';
 import { useEffect } from 'react';
-import { Form, Link, useFetcher, useNavigate } from 'react-router-dom';
+import { Link, useFetcher, useNavigate } from 'react-router-dom';
 
 import Button from '../components/button/Button';
-import { useLocalStorage } from '../components/hooks/useLocalStorage';
 import TextInput from '../components/input/TextInput';
-import { AuthUserType, useAuth } from '../components/routes/auth';
+import { useAuth } from '../components/routes/auth';
 
 export const Login = () => {
   const fetcher = useFetcher();
-  const navigate = useNavigate();
-  const [user, setValueInLocalStorage] = useLocalStorage<AuthUserType>('user', {
-    auth: false,
-  });
   const auth = useAuth();
+  const navigate = useNavigate();
 
+  const { data, state } = fetcher;
+
+  /**
+   * on successfull login and before navigating to home page,
+   * set localstorage and auth context value
+   */
   useEffect(() => {
-    if (user.auth) {
+    if (data && data.success) {
       auth?.setLoginUser({
         auth: true,
       });
-      navigate('/');
+      auth?.addLocalStorageToken(data?.data.access_token, data?.data.refresh_token);
+      return navigate('/home', {
+        replace: true,
+      });
     }
-  }, [user]);
-
-  // method
-  const onLogin = () => {
-    setValueInLocalStorage({
-      auth: true,
-    });
-    auth?.setLoginUser({
-      auth: true,
-    });
-
-    navigate('/');
-  };
+  }, [data]);
 
   return (
     <div className="h-full flex items-center justify-center">
@@ -50,13 +43,13 @@ export const Login = () => {
             type={'text'}
             placeholder="Username"
             sizing="sm"
-            name="username"
+            name="email"
           />
           <TextInput
             label="Password"
             type={'password'}
             placeholder="Password"
-            className="py-5"
+            className="py-2"
             sizing="sm"
             name="password"
           />
@@ -67,6 +60,13 @@ export const Login = () => {
             <Link to="/forget-password" className="text-sm text-blue-600 hover:underline">
               Forgot password?
             </Link>
+          </div>
+          <div>
+            {data?.error
+              ? data.error.message
+              : state === 'submitting'
+              ? 'Loading...'
+              : null}
           </div>
         </div>
       </fetcher.Form>

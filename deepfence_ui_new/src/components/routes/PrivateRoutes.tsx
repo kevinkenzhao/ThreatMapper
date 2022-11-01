@@ -1,11 +1,35 @@
-import { Navigate, Outlet, useRouteError } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useRouteError } from 'react-router-dom';
 
+import { useLocalStorage } from '../hooks/useLocalStorage';
 import { Typography } from '../typography/Typography';
-import { useAuth } from './auth';
+import { AuthUserType } from './auth';
+
+const RootOutlet = () => {
+  return (
+    <div>
+      <div className="w-full bg-gray-500 fixed h-[48px]">Header Portion</div>
+      <div className="w-[200px] h-screen bg-gray-500 fixed mt-[48px]">Sidebar</div>
+      <div className="ml-[200px] pt-[48px] relative">
+        <Outlet />
+      </div>
+    </div>
+  );
+};
 
 const PrivateRoutes = () => {
-  const authContext = useAuth();
-  return authContext?.user.auth ? <Outlet /> : <Navigate to="/login" replace />;
+  const [user] = useLocalStorage<AuthUserType>('user', {
+    auth: false,
+  });
+  const location = useLocation();
+
+  if (!user?.auth) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (location.pathname === '/') {
+    return <Navigate to="/home" replace />;
+  }
+  return <RootOutlet />;
 };
 
 export const RootRouteError = () => {

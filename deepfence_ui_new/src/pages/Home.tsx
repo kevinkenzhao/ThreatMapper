@@ -2,18 +2,18 @@ import { Suspense } from 'react';
 import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 
 import Button from '../components/button/Button';
-import { useLocalStorage } from '../components/hooks/useLocalStorage';
+import { useAuth } from '../components/routes/auth';
 
 export const Home = () => {
   const { data } = useLoaderData();
-  const [, setValueInLocalStorage] = useLocalStorage('user', {});
+  const auth = useAuth();
   const navigate = useNavigate();
 
   return (
     <div className="flex flex-col justify-around dark:text-white">
       <div>Home</div>
       <Suspense fallback={<p className="dark:text-white">Loading...</p>}>
-        <Await resolve={data} errorElement={<p>Error loading </p>}>
+        <Await resolve={data}>
           {(data) => (
             <>
               <div>
@@ -21,10 +21,10 @@ export const Home = () => {
               </div>
               <Button
                 onClick={() => {
-                  setValueInLocalStorage({
-                    auth: false,
+                  auth?.logout();
+                  navigate('/login', {
+                    replace: true,
                   });
-                  navigate('/login');
                 }}
               >
                 Logout

@@ -1,5 +1,5 @@
 import { defer } from 'react-router-dom';
-function delay(t, v) {
+function delay(t: number, v: unknown) {
   return new Promise(function (resolve) {
     setTimeout(resolve.bind(null, v), t);
   });
@@ -7,7 +7,7 @@ function delay(t, v) {
 
 export const rootLoader = async () => {
   console.log('root loader, loading api data');
-  const data = delay(5000).then(function () {
+  const data = delay(5000, 'test data').then(function () {
     return {
       title: 'This is home',
       data: 'Root Data',
