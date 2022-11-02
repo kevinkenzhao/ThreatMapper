@@ -1,7 +1,9 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { ErrorPage } from './components/error/ErrorPage';
-import { AuthProvider, loginAction } from './components/routes/auth';
+import { forgotPasswordAction } from './components/routes/actions/forgotPasswordAction';
+import { loginAction } from './components/routes/actions/loginAcrion';
+import { AuthProvider } from './components/routes/auth';
 import { rootAction, rootLoader } from './components/routes/home';
 import PrivateRoutes, { RootRouteError } from './components/routes/PrivateRoutes';
 import { ForgetPassword } from './pages/ForgetPassword';
@@ -38,8 +40,9 @@ const router = createBrowserRouter([
     action: loginAction,
   },
   {
-    path: '/forget-password',
+    path: '/forgot-password',
     element: <ForgetPassword />,
+    action: forgotPasswordAction,
   },
   {
     path: '*',

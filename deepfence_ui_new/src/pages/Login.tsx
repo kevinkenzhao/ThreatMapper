@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Link, useFetcher, useNavigate } from 'react-router-dom';
 
 import Button from '../components/button/Button';
+import { Card } from '../components/card/Card';
 import TextInput from '../components/input/TextInput';
 import { useAuth } from '../components/routes/auth';
 
@@ -32,12 +33,7 @@ export const Login = () => {
   return (
     <div className="h-full flex items-center justify-center">
       <fetcher.Form method="post">
-        <div
-          className={cx(
-            'w-80 p-3 h-96 flex flex-col items-center justify-center rounded-lg bg-white shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)]',
-            'dark:bg-gray-800',
-          )}
-        >
+        <Card className="w-80 p-3 h-96">
           <TextInput
             label="Username"
             type={'text'}
@@ -53,11 +49,18 @@ export const Login = () => {
             sizing="sm"
             name="password"
           />
-          <div className="flex items-baseline justify-between w-full py-5">
-            <Button size="xs" color="primary">
+          <div className="flex flex-col w-full py-5">
+            <Button size="sm" color="primary" className="w-full">
               Login
             </Button>
-            <Link to="/forget-password" className="text-sm text-blue-600 hover:underline">
+            <Link
+              to="/forgot-password"
+              className={cx(
+                'text-sm text-blue-600 mt-6 text-center',
+                'hover:underline',
+                'focus:outline-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-2 dark:focus:ring-gray-400',
+              )}
+            >
               Forgot password?
             </Link>
           </div>
@@ -68,7 +71,7 @@ export const Login = () => {
               ? 'Loading...'
               : null}
           </div>
-        </div>
+        </Card>
       </fetcher.Form>
     </div>
   );
