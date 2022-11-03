@@ -582,10 +582,10 @@ def attack_paths_to_nodes_info(attack_paths, data, cp, host_id, container_id):
                 internal_nodes[internal_node]["name"] = internal_node
                 internal_nodes[internal_node]["vulnerability_count"] = internal_node_cve
                 internal_nodes[internal_node]["vulnerability_scan_id"] = {}
-                internal_nodes[internal_node]["compliance_count"] = internal_node_secrets
-                internal_nodes[internal_node]["compliance_scan_id"] = {}
-                internal_nodes[internal_node]["secrets_count"] = internal_node_compliance
+                internal_nodes[internal_node]["secrets_count"] = internal_node_secrets
                 internal_nodes[internal_node]["secrets_scan_id"] = {}
+                internal_nodes[internal_node]["compliance_count"] = internal_node_compliance
+                internal_nodes[internal_node]["compliance_scan_id"] = {}
             entry["nodes"] = internal_nodes
 
             nodes_info[node_id] = entry

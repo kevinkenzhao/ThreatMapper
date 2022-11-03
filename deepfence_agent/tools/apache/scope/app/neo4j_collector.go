@@ -951,6 +951,10 @@ func (nc *neo4jCollector) PushToDB(batches neo4jIngestionData) error {
 		return err
 	}
 
+	if _, err = tx.Run("UNWIND $batch as row MATCH (n:Node{node_id: 'in-the-internet'}) -[r:CONNECTS]-> (n:Node{node_id: row.node_id}) detach delete r", map[string]interface{}{"batch": batches.Hosts}); err != nil {
+		return err
+	}
+
 	if _, err = tx.Run("UNWIND $batch as row MATCH (n:Node{node_id: row.source}) WITH n, row UNWIND row.edges as row2  MATCH (m:Node{node_id: row2.destination}) MERGE (n)-[:CONNECTS {left_pid: row2.left_pid, right_pid: row2.right_pid}]->(m)", map[string]interface{}{"batch": batches.Endpoint_edges_batch}); err != nil {
 		return err
 	}
