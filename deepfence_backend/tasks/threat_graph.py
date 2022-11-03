@@ -495,6 +495,7 @@ def get_attack_paths_neo4j(neo4jg):
     all = {}
     providers = [CLOUD_AWS, CLOUD_AZURE, CLOUD_GCP, pvt_cloud]
     aggreg = neo4jg.compute_threat_graph(providers)
+    print(aggreg)
 
     host_id = 0
     container_id = 0
@@ -503,7 +504,9 @@ def get_attack_paths_neo4j(neo4jg):
         tree = aggreg[cp][0]
         data = aggreg[cp][1]
         depths = aggreg[cp][2]
-        root = depths[0].pop()
+        if 1 not in depths:
+            continue
+        root = depths[1].pop()
         graphs = []
         while root:
             visited = set()
@@ -514,10 +517,11 @@ def get_attack_paths_neo4j(neo4jg):
             graph = attack_paths_to_graph(attack_paths, info)
             for g in graph:
                 graphs.append(g)
-            if len(depths[0]) == 0:
+            if len(depths[1]) == 0:
                 break
-            root = depths[0].pop()
+            root = depths[1].pop()
         all[cp] = graphs
+    print(all)
     return all, infos
 
 def build_attack_paths(tree, data, root, visited):
@@ -592,12 +596,13 @@ def attack_paths_to_nodes_info(attack_paths, data, cp, host_id, container_id):
 def attack_paths_to_graph(attack_paths, info):
     res = []
     for attack_path in attack_paths:
-        for i in range(1, len(attack_path)):
+        for i in range(0, len(attack_path)):
             entry = info[attack_path[i]].copy()
             path = []
             for node_id in reversed(attack_path[:(len(attack_path)-i+1)]):
                 name = info[node_id]["id"]
                 path.insert(0, name)
+            path.insert(0, 'The Internet')
             entry['attack_path'] = [path]
             res.append(entry)
     return res
@@ -764,11 +769,11 @@ def _compute_threat_graph():
     # Get topology data
     neo4jg = Neo4jGraph()
     #neo4jg.clear_connections()
-    neo4jg.add_host_entry({"node_id": internet_node_id(CLOUD_AWS), "node_type":"", "depth": 0,"cloud_provider": CLOUD_AWS})
-    neo4jg.add_host_entry({"node_id": internet_node_id(CLOUD_AZURE), "node_type":"", "depth": 0,"cloud_provider": CLOUD_AZURE})
-    neo4jg.add_host_entry({"node_id": internet_node_id(CLOUD_GCP), "node_type":"", "depth": 0,"cloud_provider": CLOUD_GCP})
-    neo4jg.add_host_entry({"node_id": internet_node_id(pvt_cloud), "node_type":"", "depth": 0,"cloud_provider": pvt_cloud})
-    neo4jg.add_host_entry({"node_id": outgoing_internet_host_id, "node_type":""})
+    #neo4jg.add_host_entry({"node_id": internet_node_id(CLOUD_AWS), "node_type":"", "depth": 0,"cloud_provider": CLOUD_AWS})
+    #neo4jg.add_host_entry({"node_id": internet_node_id(CLOUD_AZURE), "node_type":"", "depth": 0,"cloud_provider": CLOUD_AZURE})
+    #neo4jg.add_host_entry({"node_id": internet_node_id(CLOUD_GCP), "node_type":"", "depth": 0,"cloud_provider": CLOUD_GCP})
+    #neo4jg.add_host_entry({"node_id": internet_node_id(pvt_cloud), "node_type":"", "depth": 0,"cloud_provider": pvt_cloud})
+    #neo4jg.add_host_entry({"node_id": outgoing_internet_host_id, "node_type":""})
 
     threat_graph = {
         CLOUD_AWS: {"count": 0, "secrets_count": 0, "vulnerability_count": 0, "compliance_count": 0, "resources": {}},
