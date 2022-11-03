@@ -109,25 +109,43 @@ type DfCveStruct struct {
 }
 
 type CloudResource struct {
-	AccountID             string `json:"account_id"`
-	Arn                   string `json:"arn"`
-	BlockPublicAcls       bool   `json:"block_public_acls,omitempty"`
-	BlockPublicPolicy     bool   `json:"block_public_policy,omitempty"`
-	BucketPolicyIsPublic  bool   `json:"bucket_policy_is_public,omitempty"`
-	RestrictPublicBuckets bool   `json:"restrict_public_buckets,omitempty"`
-	ID                    string `json:"id"`
-	IgnorePublicAcls      bool   `json:"ignore_public_acls,omitempty"`
-	Name                  string `json:"name"`
-	//Policy                interface{} `json:"policy"`
-	Region         string `json:"region"`
-	ResourceID     string `json:"resource_id"`
-	InstanceID     string `json:"instance_id"`
-	SecurityGroups []struct {
-		GroupName string `json:"GroupName"`
-		GroupID   string `json:"GroupId"`
-	} `json:"security_groups"`
+	AccountID             string      `json:"account_id"`
+	Arn                   string      `json:"arn"`
+	BlockPublicAcls       bool        `json:"block_public_acls,omitempty"`
+	BlockPublicPolicy     bool        `json:"block_public_policy,omitempty"`
+	BucketPolicyIsPublic  bool        `json:"bucket_policy_is_public,omitempty"`
+	RestrictPublicBuckets bool        `json:"restrict_public_buckets,omitempty"`
+	ID                    string      `json:"id"`
+	IgnorePublicAcls      bool        `json:"ignore_public_acls,omitempty"`
+	Name                  string      `json:"name"`
+	Policy                interface{} `json:"policy"`
+
+	Region                         string        `json:"region"`
+	ResourceID                     string        `json:"resource_id"`
+	InstanceID                     string        `json:"instance_id"`
+	ResourcesVpcConfig             interface{}   `json:"resource_vpc_config"`
+	NetworkMode                    string        `json:"network_mode"`
+	ContainerDefinitions           []interface{} `json:"container_definitions"`
+	EventNotificationConfiguration interface{}   `json:"event_notification_configuration"`
+	Scheme                         string        `json:"scheme"`
+	DbClusterIdentifier            string        `json:"db_cluster_identifier"`
+	VpcSecurityGroups              interface{}   `json:"vpc_security_groups"`
+	ServiceName                    interface{}   `json:"service_name"`
+	TaskDefinitionArn              string        `json:"task_definition_arn"`
+	PolicyStd                      interface{}   `json:"policy_std"`
 	//SecurityGroups []map[string]string `json:"security_groups"`
-	VpcID string `json:"vpc_id,omitempty"`
+	VpcID                 string      `json:"vpc_id,omitempty"`
+	NetworkInterfaces     interface{} `json:"network_interfaces"`
+	IamPolicy             string      `json:"iam_policy"`
+	IpConfiguration       interface{} `json:"ip_configuration"`
+	IngressSettings       interface{} `json:"ingress_settings"`
+	AllowBlobPublicAccess string      `json:"allow_blob_public_access"`
+	PublicAccess          string      `json:"public_access"`
+	PublicIps             string      `json:"public_ips"`
+	GroupId               string      `json:"group_id"`
+	CidrIpv4              string      `json:"cidr_ipv4"`
+	TaskDefinition        string      `json:"task_definition"`
+	VpcOptions            string      `json:"vpc_options"`
 }
 
 type SecretStruct struct {

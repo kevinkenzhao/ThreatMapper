@@ -255,15 +255,63 @@ func (tc *TopologyClient) ComputeThreatGraph() error {
 		return err
 	}
 
-	if _, err = tx.Run("MATCH (n:Node) SET n.num_cve = COALESCE(n.num_cve, 0), n.num_secrets = COALESCE(n.num_secrets, 0), n.num_compliance = COALESCE(n.num_compliance, 0);", map[string]interface{}{}); err != nil {
-		return err
-	}
-
-	if _, err = tx.Run("MATCH (n:Node) SET n.sum_cve = n.num_cve, n.sum_secrets = n.num_secrets, n.sum_compliance = n.num_compliance;", map[string]interface{}{}); err != nil {
+	if _, err = tx.Run("MATCH (n:Node) SET n.sum_cve = COALESCE(n.num_cve, 0), n.sum_secrets = COALESCE(n.num_secrets, 0), n.sum_compliance = COALESCE(n.num_compliance, 0);", map[string]interface{}{}); err != nil {
 		return err
 	}
 
 	if _, err = tx.Run("MATCH (n:Node) -[:CONNECTS]->(m:Node) SET n.sum_cve = COALESCE(n.sum_cve, 0) + COALESCE(m.sum_cve, m.num_cve, 0), n.sum_secrets = COALESCE(n.sum_secrets, 0) + COALESCE(m.sum_secrets, m.num_secrets, 0), n.sum_compliance = COALESCE(n.sum_compliance, 0) + COALESCE(m.sum_compliance, m.num_compliance, 0);", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:SecurityGroup{ CidrIpv4: '0.0.0.0/0'} ) -[:SECURED]-> (m:CloudResource{resource_type:'aws_ec2_instance'}) where n.IsEgress = true MERGE (k:Node {node_id:'out-the-internet'})  MERGE (m)-[:PUBLIC]->(K)", map[string]interface{}{"batch": types.ResourceToMaps(cs)}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:SecurityGroup{ CidrIpv4: '0.0.0.0/0'} ) -[:SECURED]-> (m:CloudResource{resource_type:'aws_ec2_instance'}) MATCH (k:Node {node_id:'in-the-internet'})  where n.IsEgress != true  MERGE (k)-[:PUBLIC]->(m)", map[string]interface{}{"batch": types.ResourceToMaps(cs)}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_ecs_task_definition', network_mode: 'vpc' })   MATCH (m:CloudResource{resource_type:'aws_ecs_service', task_definition: n.arn  })  WITH apoc.convert.fromJsonMap(m.task_definition) as map,m    WHERE map.network_configuration.AwsvpcConfiguration.AssignPublicIp = 'ENABLED'  MATCH (k:CloudResource{resource_type:'aws_ecs_task', service_name : m.service_name  }) MATCH (p:Node {node_id:'in-the-internet'})  MERGE (p) -[:PUBLIC]-> (k)", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_ecs_task_definition'})   WITH apoc.convert.fromJsonMap(m.container_definitions) as container_definitions,n  FOREACH (container_def IN container_definitions | MATCH ( m:CloudResource{resource_type:'aws_ecs_service', task_definition: n.arn  })  WITH apoc.convert.fromJsonMap(m.task_definition) as map,m    WHERE map.network_configuration.AwsvpcConfiguration.AssignPublicIp = 'ENABLED'  MATCH (k:CloudResource{resource_type:'aws_ecs_task', service_name : m.service_name  })) MERGE (l:CloudResource{resource_type:'container_image', node_id: container_def.Image })  MERGE (l) -[:PUBLIC]-> (k) )", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_s3_bucket', bucket_policy_is_public: true })  MATCH (p:Node {node_id:'in-the-internet'})   MERGE (p) -[:PUBLIC]-> (n)", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_lambda_function' }) WITH apoc.convert.fromJsonMap(n.policy_std) as policy,n  where policy.Statement.Principal.AWS = '*' and policy.Statement.Effect = 'Allow'  MATCH (p:Node {node_id:'in-the-internet'})   MERGE (p) -[:PUBLIC]-> (n)", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_s3_bucket' }) WITH apoc.convert.fromJsonMap(n.event_notification_configuration) as eventConfig,n   FOREACH (config IN eventConfig.LambdaFunctionConfigurations | MATCH (p:CloudResource{resource_type:'aws_lambda_function' , arn: config.LambdaFunctionArn})     MERGE (p) -[:OPERATES]-> (n) ) ", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_ec2_classic_load_balancer', scheme : 'internet_facing' }) MATCH (p:Node {node_id:'in-the-internet'})   MERGE (p) -[:PUBLIC]-> (n)) ", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_ec2_network_load_balancer', scheme : 'internet_facing' }) MATCH (p:Node {node_id:'in-the-internet'})   MERGE (p) -[:PUBLIC]-> (n)) ", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_ec2_application_load_balancer', scheme : 'internet_facing' }) MATCH (p:Node {node_id:'in-the-internet'})   MERGE (p) -[:PUBLIC]-> (n)) ", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_opensearch_domain' }) where n.vpc_options IS NULL MATCH (p:Node {node_id:'in-the-internet'})   MERGE (p) -[:PUBLIC]-> (n)) ", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_rds_db_cluster'}) WITH apoc.convert.fromJsonMap(n.vpc_security_groups) as vpc_security_groups,n where vpc_security_groups.VpcSecurityGroupId.is_egress IS NOT NULL and  vpc_security_groups.VpcSecurityGroupId.cidr_ipv4= '0.0.0.0/0'  MERGE (p:Node {node_id:'out-the-internet'})   MERGE (n) -[:PUBLIC]-> (p)) ", map[string]interface{}{}); err != nil {
+		return err
+	}
+
+	if _, err = tx.Run("MATCH (n:CloudResource{resource_type:'aws_rds_db_cluster'}) WITH apoc.convert.fromJsonMap(n.vpc_security_groups) as vpc_security_groups,n where vpc_security_groups.VpcSecurityGroupId.is_egress IS  NULL and  vpc_security_groups.VpcSecurityGroupId.cidr_ipv4= '0.0.0.0/0'  MATCH (p:Node {node_id:'in-the-internet'})   MERGE (p) -[:PUBLIC]-> (n)) ", map[string]interface{}{}); err != nil {
 		return err
 	}
 
