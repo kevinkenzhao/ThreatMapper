@@ -263,11 +263,11 @@ func (tc *TopologyClient) ComputeThreatGraph() error {
 		return err
 	}
 
-	if _, err = tx.Run("MATCH (n:SecurityGroup{ CidrIpv4: '0.0.0.0/0'} ) -[:SECURED]-> (m:CloudResource{resource_type:'aws_ec2_instance'}) where n.IsEgress = true MERGE (k:Node {node_id:'out-the-internet'})  MERGE (m)-[:PUBLIC]->(K)", map[string]interface{}{"batch": types.ResourceToMaps(cs)}); err != nil {
+	if _, err = tx.Run("MATCH (n:SecurityGroup{ CidrIpv4: '0.0.0.0/0'} ) -[:SECURED]-> (m:CloudResource{resource_type:'aws_ec2_instance'}) where n.IsEgress = true MERGE (k:Node {node_id:'out-the-internet'})  MERGE (m)-[:PUBLIC]->(K)", map[string]interface{}{}); err != nil {
 		return err
 	}
 
-	if _, err = tx.Run("MATCH (n:SecurityGroup{ CidrIpv4: '0.0.0.0/0'} ) -[:SECURED]-> (m:CloudResource{resource_type:'aws_ec2_instance'}) MATCH (k:Node {node_id:'in-the-internet'})  where n.IsEgress != true  MERGE (k)-[:PUBLIC]->(m)", map[string]interface{}{"batch": types.ResourceToMaps(cs)}); err != nil {
+	if _, err = tx.Run("MATCH (n:SecurityGroup{ CidrIpv4: '0.0.0.0/0'} ) -[:SECURED]-> (m:CloudResource{resource_type:'aws_ec2_instance'}) MATCH (k:Node {node_id:'in-the-internet'})  where n.IsEgress != true  MERGE (k)-[:PUBLIC]->(m)", map[string]interface{}{}); err != nil {
 		return err
 	}
 
