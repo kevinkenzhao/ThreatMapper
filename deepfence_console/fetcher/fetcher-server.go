@@ -1278,6 +1278,7 @@ func ingestCloudResources(respWrite http.ResponseWriter, req *http.Request) {
 	}
 	var cloud_resources []types.CloudResource
 	err = json.Unmarshal(body, &cloud_resources)
+	fmt.Println("test unmarshalling",cloud_resources)
 	if err == nil {
 		client := topology.NewTopologyClient()
 		if client != nil {

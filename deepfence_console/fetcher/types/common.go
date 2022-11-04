@@ -118,34 +118,34 @@ type CloudResource struct {
 	ID                    string      `json:"id"`
 	IgnorePublicAcls      bool        `json:"ignore_public_acls,omitempty"`
 	Name                  string      `json:"name"`
-	Policy                string `json:"policy"`
+	Policy                string `json:"policy,omitempty"`
 
 	Region                         string        `json:"region"`
 	ResourceID                     string        `json:"resource_id"`
 	InstanceID                     string        `json:"instance_id"`
-	ResourcesVpcConfig             string   `json:"resource_vpc_config"`
-	NetworkMode                    string        `json:"network_mode"`
-	ContainerDefinitions           string `json:"container_definitions"`
-	EventNotificationConfiguration string   `json:"event_notification_configuration"`
-	Scheme                         string        `json:"scheme"`
-	DbClusterIdentifier            string        `json:"db_cluster_identifier"`
-	VpcSecurityGroups              string   `json:"vpc_security_groups"`
-	ServiceName                    string   `json:"service_name"`
-	TaskDefinitionArn              string        `json:"task_definition_arn"`
-	PolicyStd                      string   `json:"policy_std"`
+	ResourcesVpcConfig             string   `json:"resource_vpc_config,omitempty"`
+	NetworkMode                    string        `json:"network_mode,omitempty"`
+	ContainerDefinitions           string `json:"container_definitions,omitempty"`
+	EventNotificationConfiguration string   `json:"event_notification_configuration,omitempty"`
+	Scheme                         string        `json:"scheme,omitempty"`
+	DbClusterIdentifier            string        `json:"db_cluster_identifier,omitempty"`
+	VpcSecurityGroups              string   `json:"vpc_security_groups,omitempty"`
+	ServiceName                    string   `json:"service_name,omitempty"`
+	TaskDefinitionArn              string        `json:"task_definition_arn,omitempty"`
+	PolicyStd                      string   `json:"policy_std,omitempty"`
 	//SecurityGroups []map[string]string `json:"security_groups"`
 	VpcID                 string      `json:"vpc_id,omitempty"`
-	NetworkInterfaces     string `json:"network_interfaces"`
-	IamPolicy             string      `json:"iam_policy"`
-	IpConfiguration       string `json:"ip_configuration"`
-	IngressSettings       string `json:"ingress_settings"`
-	AllowBlobPublicAccess string      `json:"allow_blob_public_access"`
-	PublicAccess          string      `json:"public_access"`
-	PublicIps             string      `json:"public_ips"`
-	GroupId               string      `json:"group_id"`
-	CidrIpv4              string      `json:"cidr_ipv4"`
-	TaskDefinition        string      `json:"task_definition"`
-	VpcOptions            string      `json:"vpc_options"`
+	NetworkInterfaces     string `json:"network_interfaces,omitempty"`
+	IamPolicy             string      `json:"iam_policy,omitempty"`
+	IpConfiguration       string `json:"ip_configuration,omitempty"`
+	IngressSettings       string `json:"ingress_settings,omitempty"`
+	AllowBlobPublicAccess string      `json:"allow_blob_public_access,omitempty"`
+	PublicAccess          string      `json:"public_access,omitempty"`
+	PublicIps             string      `json:"public_ips,omitempty"`
+	GroupId               string      `json:"group_id,omitempty"`
+	CidrIpv4              string      `json:"cidr_ipv4,omitempty"`
+	TaskDefinition        string      `json:"task_definition,omitempty"`
+	VpcOptions            string      `json:"vpc_options,omitempty"`
 }
 
 type SecretStruct struct {
