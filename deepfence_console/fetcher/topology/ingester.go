@@ -268,7 +268,7 @@ func (tc *TopologyClient) ComputeThreatGraph() error {
 		return err
 	}
 
-	if _, err = tx.Run("MATCH (n:SecurityGroup{ CidrIpv4: '0.0.0.0/0'} ) -[:SECURED]-> (m:CloudResource{resource_type:'aws_ec2_instance'}) MATCH (k:Node {node_id:'in-the-internet'})  where n.IsEgress != true  MERGE (k)-[:PUBLIC]->(m)", map[string]interface{}{}); err != nil {
+	if _, err = tx.Run("MATCH (n:SecurityGroup{ CidrIpv4: '0.0.0.0/0'} ) -[:SECURED]-> (m:CloudResource{resource_type:'aws_ec2_instance'}) MATCH (k:Node {node_id:'in-the-internet'})  where n.IsEgress <> true  MERGE (k)-[:PUBLIC]->(m)", map[string]interface{}{}); err != nil {
 		return err
 	}
 
