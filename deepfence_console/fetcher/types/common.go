@@ -118,27 +118,27 @@ type CloudResource struct {
 	ID                    string      `json:"id"`
 	IgnorePublicAcls      bool        `json:"ignore_public_acls,omitempty"`
 	Name                  string      `json:"name"`
-	Policy                interface{} `json:"policy"`
+	Policy                string `json:"policy"`
 
 	Region                         string        `json:"region"`
 	ResourceID                     string        `json:"resource_id"`
 	InstanceID                     string        `json:"instance_id"`
-	ResourcesVpcConfig             interface{}   `json:"resource_vpc_config"`
+	ResourcesVpcConfig             string   `json:"resource_vpc_config"`
 	NetworkMode                    string        `json:"network_mode"`
-	ContainerDefinitions           []interface{} `json:"container_definitions"`
-	EventNotificationConfiguration interface{}   `json:"event_notification_configuration"`
+	ContainerDefinitions           string `json:"container_definitions"`
+	EventNotificationConfiguration string   `json:"event_notification_configuration"`
 	Scheme                         string        `json:"scheme"`
 	DbClusterIdentifier            string        `json:"db_cluster_identifier"`
-	VpcSecurityGroups              interface{}   `json:"vpc_security_groups"`
-	ServiceName                    interface{}   `json:"service_name"`
+	VpcSecurityGroups              string   `json:"vpc_security_groups"`
+	ServiceName                    string   `json:"service_name"`
 	TaskDefinitionArn              string        `json:"task_definition_arn"`
-	PolicyStd                      interface{}   `json:"policy_std"`
+	PolicyStd                      string   `json:"policy_std"`
 	//SecurityGroups []map[string]string `json:"security_groups"`
 	VpcID                 string      `json:"vpc_id,omitempty"`
-	NetworkInterfaces     interface{} `json:"network_interfaces"`
+	NetworkInterfaces     string `json:"network_interfaces"`
 	IamPolicy             string      `json:"iam_policy"`
-	IpConfiguration       interface{} `json:"ip_configuration"`
-	IngressSettings       interface{} `json:"ingress_settings"`
+	IpConfiguration       string `json:"ip_configuration"`
+	IngressSettings       string `json:"ingress_settings"`
 	AllowBlobPublicAccess string      `json:"allow_blob_public_access"`
 	PublicAccess          string      `json:"public_access"`
 	PublicIps             string      `json:"public_ips"`
