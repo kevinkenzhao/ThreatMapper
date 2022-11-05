@@ -1273,12 +1273,13 @@ func ingestCloudResources(respWrite http.ResponseWriter, req *http.Request) {
 	}
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
+		fmt.Println("test everything here in  req body", body)
 		http.Error(respWrite, "Error reading request body", http.StatusInternalServerError)
 		return
 	}
+	fmt.Println("test everything here in body", body)
 	var cloud_resources []types.CloudResource
 	err = json.Unmarshal(body, &cloud_resources)
-	fmt.Println("test unmarshalling",cloud_resources)
 	if err == nil {
 		client := topology.NewTopologyClient()
 		if client != nil {
@@ -1293,7 +1294,7 @@ func ingestCloudResources(respWrite http.ResponseWriter, req *http.Request) {
 		http.Error(respWrite, "Error unmarshalling request body", http.StatusInternalServerError)
 		return
 	}
-
+	fmt.Println("test unmarshalling", cloud_resources)
 	respWrite.WriteHeader(http.StatusOK)
 	fmt.Fprintf(respWrite, "Ok")
 }

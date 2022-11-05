@@ -143,6 +143,7 @@ func (tc *TopologyClient) AddSecrets(cs []map[string]interface{}) error {
 }
 
 func (tc *TopologyClient) AddCloudResources(cs []types.CloudResource) error {
+	fmt.Println("test everything here", cs)
 	session, err := tc.driver.Session(neo4j.AccessModeWrite)
 
 	if err != nil {
