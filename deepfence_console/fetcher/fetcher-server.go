@@ -1255,12 +1255,26 @@ func ingest(respWrite http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		http.Error(respWrite, "Error reading request body", http.StatusInternalServerError)
+		var cloud_resources []types.CloudResource
+		marshallerr := json.Unmarshal(body, &cloud_resources)
+		if marshallerr != nil {
+			log.Println("cloud not marshall: " + marshallerr.Error())
+			return
+		} 
+		client := topology.NewTopologyClient()
+		if client != nil {
+			clouderr := client.AddCloudResources(cloud_resources)
+			if clouderr != nil {
+				log.Println("cloud err: " + clouderr.Error())
+			} else {
+				log.Println("Added resource")
+			}
+		}
 		return
 	}
 	docType := req.URL.Query().Get("doc_type")
 	docType = convertRootESIndexToCustomerSpecificESIndex(docType)
 	go ingestInBackground(docType, body)
-	//go send_to_neo4j(body)
 	respWrite.WriteHeader(http.StatusOK)
 	fmt.Fprintf(respWrite, "Ok")
 }
