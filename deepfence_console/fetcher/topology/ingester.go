@@ -161,7 +161,7 @@ func (tc *TopologyClient) AddCloudResources(cs []types.CloudResource) error {
 	}
 	fmt.Println("test everything here", cs)
 
-	if _, err = tx.Run("UNWIND $batch as row MERGE (m:CloudResource{node_id:row.arn, resource_type:row.resource_id}) SET m+=row", map[string]interface{}{"batch": cs}); err != nil {
+	if _, err = tx.Run("UNWIND $batch as row MERGE (m:CloudResource{node_id:row.arn, resource_type:row.resource_id}) SET m+=row", map[string]interface{}{"batch": types.ResourceToMaps(cs)}); err != nil {
 		return err
 	}
 
