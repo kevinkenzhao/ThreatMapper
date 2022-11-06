@@ -109,43 +109,27 @@ type DfCveStruct struct {
 }
 
 type CloudResource struct {
-	AccountID             string      `json:"account_id"`
-	Arn                   string      `json:"arn"`
-	BlockPublicAcls       bool        `json:"block_public_acls,omitempty"`
-	BlockPublicPolicy     bool        `json:"block_public_policy,omitempty"`
-	BucketPolicyIsPublic  bool        `json:"bucket_policy_is_public,omitempty"`
-	RestrictPublicBuckets bool        `json:"restrict_public_buckets,omitempty"`
-	ID                    string      `json:"id"`
-	IgnorePublicAcls      bool        `json:"ignore_public_acls,omitempty"`
-	Name                  string      `json:"name"`
-	Policy                string `json:"policy,omitempty"`
-
-	Region                         string        `json:"region"`
-	ResourceID                     string        `json:"resource_id"`
-	InstanceID                     string        `json:"instance_id"`
-	ResourcesVpcConfig             string   `json:"resource_vpc_config,omitempty"`
-	NetworkMode                    string        `json:"network_mode,omitempty"`
-	ContainerDefinitions           string `json:"container_definitions,omitempty"`
-	EventNotificationConfiguration string   `json:"event_notification_configuration,omitempty"`
-	Scheme                         string        `json:"scheme,omitempty"`
-	DbClusterIdentifier            string        `json:"db_cluster_identifier,omitempty"`
-	VpcSecurityGroups              string   `json:"vpc_security_groups,omitempty"`
-	ServiceName                    string   `json:"service_name,omitempty"`
-	TaskDefinitionArn              string        `json:"task_definition_arn,omitempty"`
-	PolicyStd                      string   `json:"policy_std,omitempty"`
+	AccountID             string `json:"account_id"`
+	Arn                   string `json:"arn"`
+	BlockPublicAcls       bool   `json:"block_public_acls,omitempty"`
+	BlockPublicPolicy     bool   `json:"block_public_policy,omitempty"`
+	BucketPolicyIsPublic  bool   `json:"bucket_policy_is_public,omitempty"`
+	RestrictPublicBuckets bool   `json:"restrict_public_buckets,omitempty"`
+	ID                    string `json:"id"`
+	IgnorePublicAcls      bool   `json:"ignore_public_acls,omitempty"`
+	Name                  string `json:"name"`
+	//Policy                interface{} `json:"policy"`
+	Region         string `json:"region"`
+	ResourceID     string `json:"resource_id"`
+	InstanceID     string `json:"instance_id"`
+	SecurityGroups []struct {
+		GroupName string `json:"GroupName"`
+		GroupID   string `json:"GroupId"`
+	} `json:"security_groups"`
 	//SecurityGroups []map[string]string `json:"security_groups"`
-	VpcID                 string      `json:"vpc_id,omitempty"`
-	NetworkInterfaces     string `json:"network_interfaces,omitempty"`
-	IamPolicy             string      `json:"iam_policy,omitempty"`
-	IpConfiguration       string `json:"ip_configuration,omitempty"`
-	IngressSettings       string `json:"ingress_settings,omitempty"`
-	AllowBlobPublicAccess string      `json:"allow_blob_public_access,omitempty"`
-	PublicAccess          string      `json:"public_access,omitempty"`
-	PublicIps             string      `json:"public_ips,omitempty"`
-	GroupId               string      `json:"group_id,omitempty"`
-	CidrIpv4              string      `json:"cidr_ipv4,omitempty"`
-	TaskDefinition        string      `json:"task_definition,omitempty"`
-	VpcOptions            string      `json:"vpc_options,omitempty"`
+	VpcID string `json:"vpc_id,omitempty"`
+	ServiceName  string   `json:"service_name,omitempty"`
+	TaskDefinitionArn  string `json:"task_definition_arn,omitempty"`
 }
 
 type SecretStruct struct {
