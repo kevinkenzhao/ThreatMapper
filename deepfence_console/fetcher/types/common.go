@@ -129,7 +129,7 @@ type CloudResource struct {
 	EventNotificationConfiguration json.RawMessage   `json:"event_notification_configuration,omitempty"`
 	Scheme                         string        `json:"scheme,omitempty"`
 	DbClusterIdentifier            string        `json:"db_cluster_identifier,omitempty"`
-	VpcSecurityGroups              string   `json:"vpc_security_groups,omitempty"`
+	VpcSecurityGroups              json.RawMessage   `json:"vpc_security_groups,omitempty"`
 	ServiceName                    string   `json:"service_name,omitempty"`
 	TaskDefinitionArn              string        `json:"task_definition_arn,omitempty"`
 	PolicyStd                      string   `json:"policy_std,omitempty"`
