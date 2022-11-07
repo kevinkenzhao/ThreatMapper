@@ -1291,6 +1291,7 @@ func ingestCloudResources(respWrite http.ResponseWriter, req *http.Request) {
 			}
 		}
 	} else {
+		fmt.Println("test unmarshalling", err)
 		http.Error(respWrite, "Error unmarshalling request body", http.StatusInternalServerError)
 		return
 	}
