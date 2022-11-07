@@ -133,10 +133,7 @@ type CloudResource struct {
 	ServiceName                    string   `json:"service_name,omitempty"`
 	TaskDefinitionArn              string        `json:"task_definition_arn,omitempty"`
 	PolicyStd                      string   `json:"policy_std,omitempty"`
-	SecurityGroups                 []struct {
-		GroupName string `json:"GroupName"`
-		GroupID   string `json:"GroupId"`
-	} `json:"security_groups"`
+	SecurityGroups                 json.RawMessage  `json:"security_groups"`
 	VpcID                 string      `json:"vpc_id,omitempty"`
 	NetworkInterfaces     json.RawMessage `json:"network_interfaces,omitempty"`
 	IamPolicy              json.RawMessage      `json:"iam_policy,omitempty"`
