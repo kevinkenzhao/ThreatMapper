@@ -1,6 +1,9 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type ComplianceDoc struct {
 	DocId                 string `json:"doc_id"`
@@ -186,6 +189,15 @@ func ResourceToMaps(ms []CloudResource) []map[string]interface{} {
 	return res
 }
 
+func NewResourceToMaps(ms []CloudResource) []map[string]interface{} {
+	res := []map[string]interface{}{}
+	for _, v := range ms {
+		fmt.Println("test map here",v)
+		res = append(res, v.ToMap())
+	}
+	return res
+}
+
 func ResourceToMapsStrip(ms []CloudResource) []map[string]interface{} {
 	res := []map[string]interface{}{}
 	for _, v := range ms {
@@ -229,8 +241,10 @@ func (c *CloudResource) ToMap() map[string]interface{} {
 	if err != nil {
 		return nil
 	}
+	fmt.Println("test map 2 here",out)
 	bb := map[string]interface{}{}
 	err = json.Unmarshal(out, &bb)
+	fmt.Println("test map 2 here",bb)
 	return bb
 }
 
@@ -239,8 +253,10 @@ func (c *CloudResource) ToMapStrip() map[string]interface{} {
 	if err != nil {
 		return nil
 	}
+	fmt.Println("test map 2 here",out)
 	bb := map[string]interface{}{}
-	err = json.Unmarshal(out, &bb)
+	err = json.Unmarshal(out, &bb)	
 	delete(bb, "security_groups")
+	fmt.Println("test map 2 here",bb)
 	return bb
 }
