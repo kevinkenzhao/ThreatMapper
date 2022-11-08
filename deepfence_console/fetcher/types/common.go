@@ -112,43 +112,42 @@ type DfCveStruct struct {
 }
 
 type CloudResource struct {
-	AccountID             string      `json:"account_id"`
-	Arn                   string      `json:"arn"`
-	BlockPublicAcls       bool        `json:"block_public_acls,omitempty"`
-	BlockPublicPolicy     bool        `json:"block_public_policy,omitempty"`
-	BucketPolicyIsPublic  bool        `json:"bucket_policy_is_public,omitempty"`
-	RestrictPublicBuckets bool        `json:"restrict_public_buckets,omitempty"`
-	ID                    string      `json:"id"`
-	IgnorePublicAcls      bool        `json:"ignore_public_acls,omitempty"`
-	Name                  string      `json:"name"`
-	Policy                json.RawMessage  `json:"policy,omitempty"`
-
-	Region                         string        `json:"region"`
-	ResourceID                     string        `json:"resource_id"`
-	InstanceID                     string        `json:"instance_id"`
-	ResourcesVpcConfig             json.RawMessage   `json:"resource_vpc_config,omitempty"`
-	NetworkMode                    string        `json:"network_mode,omitempty"`
+	AccountID                      string          `json:"account_id"`
+	Arn                            string          `json:"arn"`
+	BlockPublicAcls                bool            `json:"block_public_acls,omitempty"`
+	BlockPublicPolicy              bool            `json:"block_public_policy,omitempty"`
+	BucketPolicyIsPublic           bool            `json:"bucket_policy_is_public,omitempty"`
+	RestrictPublicBuckets          bool            `json:"restrict_public_buckets,omitempty"`
+	ID                             string          `json:"id"`
+	IgnorePublicAcls               bool            `json:"ignore_public_acls,omitempty"`
+	Name                           string          `json:"name"`
+	Region                         string          `json:"region"`
+	ResourceID                     string          `json:"resource_id"`
+	InstanceID                     string          `json:"instance_id"`
+	NetworkMode                    string          `json:"network_mode,omitempty"`
+	Scheme                         string          `json:"scheme,omitempty"`
+	DbClusterIdentifier            string          `json:"db_cluster_identifier,omitempty"`
+	ServiceName                    string          `json:"service_name,omitempty"`
+	TaskDefinitionArn              string          `json:"task_definition_arn,omitempty"`
+	PolicyStd                      string          `json:"policy_std,omitempty"`
+	VpcID                          string          `json:"vpc_id,omitempty"`
+	AllowBlobPublicAccess          string          `json:"allow_blob_public_access,omitempty"`
+	PublicAccess                   string          `json:"public_access,omitempty"`
+	GroupId                        string          `json:"group_id,omitempty"`
+	CidrIpv4                       string          `json:"cidr_ipv4,omitempty"`
+	TaskDefinition                 json.RawMessage `json:"task_definition,omitempty"`
+	VpcOptions                     json.RawMessage `json:"vpc_options,omitempty"`
+	Policy                         json.RawMessage `json:"policy,omitempty"`
+	PublicIps                      json.RawMessage `json:"public_ips,omitempty"`
+	NetworkInterfaces              json.RawMessage `json:"network_interfaces,omitempty"`
+	IamPolicy                      json.RawMessage `json:"iam_policy,omitempty"`
+	IpConfiguration                json.RawMessage `json:"ip_configuration,omitempty"`
+	IngressSettings                json.RawMessage `json:"ingress_settings,omitempty"`
+	SecurityGroups                 json.RawMessage `json:"security_groups"`
+	VpcSecurityGroups              json.RawMessage `json:"vpc_security_groups,omitempty"`
 	ContainerDefinitions           json.RawMessage `json:"container_definitions,omitempty"`
-	EventNotificationConfiguration json.RawMessage   `json:"event_notification_configuration,omitempty"`
-	Scheme                         string        `json:"scheme,omitempty"`
-	DbClusterIdentifier            string        `json:"db_cluster_identifier,omitempty"`
-	VpcSecurityGroups              json.RawMessage   `json:"vpc_security_groups,omitempty"`
-	ServiceName                    string   `json:"service_name,omitempty"`
-	TaskDefinitionArn              string        `json:"task_definition_arn,omitempty"`
-	PolicyStd                      string   `json:"policy_std,omitempty"`
-	SecurityGroups                 json.RawMessage  `json:"security_groups"`
-	VpcID                 string      `json:"vpc_id,omitempty"`
-	NetworkInterfaces     json.RawMessage `json:"network_interfaces,omitempty"`
-	IamPolicy              json.RawMessage      `json:"iam_policy,omitempty"`
-	IpConfiguration        json.RawMessage `json:"ip_configuration,omitempty"`
-	IngressSettings        json.RawMessage `json:"ingress_settings,omitempty"`
-	AllowBlobPublicAccess string      `json:"allow_blob_public_access,omitempty"`
-	PublicAccess          string      `json:"public_access,omitempty"`
-	PublicIps              json.RawMessage      `json:"public_ips,omitempty"`
-	GroupId               string      `json:"group_id,omitempty"`
-	CidrIpv4              string      `json:"cidr_ipv4,omitempty"`
-	TaskDefinition         json.RawMessage      `json:"task_definition,omitempty"`
-	VpcOptions             json.RawMessage      `json:"vpc_options,omitempty"`
+	EventNotificationConfiguration json.RawMessage `json:"event_notification_configuration,omitempty"`
+	ResourcesVpcConfig             json.RawMessage `json:"resource_vpc_config,omitempty"`
 }
 
 type SecretStruct struct {
@@ -198,14 +197,6 @@ func NewResourceToMaps(ms []CloudResource) []map[string]interface{} {
 	return res
 }
 
-func ResourceToMapsStrip(ms []CloudResource) []map[string]interface{} {
-	res := []map[string]interface{}{}
-	for _, v := range ms {
-		res = append(res, v.ToMapStrip())
-	}
-	return res
-}
-
 func (c *ComplianceDoc) ToMap() map[string]interface{} {
 	out, err := json.Marshal(*c)
 	if err != nil {
@@ -244,19 +235,20 @@ func (c *CloudResource) ToMap() map[string]interface{} {
 	fmt.Println("test map 2 here",out)
 	bb := map[string]interface{}{}
 	err = json.Unmarshal(out, &bb)
-	fmt.Println("test map 2 here",bb)
-	return bb
-}
 
-func (c *CloudResource) ToMapStrip() map[string]interface{} {
-	out, err := json.Marshal(*c)
-	if err != nil {
-		return nil
-	}
-	fmt.Println("test map 2 here",out)
-	bb := map[string]interface{}{}
-	err = json.Unmarshal(out, &bb)	
-	delete(bb, "security_groups")
-	fmt.Println("test map 2 here",bb)
+	bb["task_definition"], _ = json.Marshal(bb["task_definition"])
+	bb["vpc_options"], _ = json.Marshal(bb["vpc_options"])
+	bb["policy"], _ = json.Marshal(bb["policy"])
+	bb["public_ips"], _ = json.Marshal(bb["public_ips"])
+	bb["network_interfaces"], _ = json.Marshal(bb["network_interfaces"])
+	bb["iam_policy"], _ = json.Marshal(bb["iam_policy"])
+	bb["ip_configuration"], _ = json.Marshal(bb["ip_configuration"])
+	bb["ingress_settings"], _ = json.Marshal(bb["ingress_settings"])
+	bb["security_groups"], _ = json.Marshal(bb["security_groups"])
+	bb["vpc_security_groups"], _ = json.Marshal(bb["vpc_security_groups"])
+	bb["container_definitions"], _ = json.Marshal(bb["container_definitions"])
+	bb["event_notification_configuration"], _ = json.Marshal(bb["event_notification_configuration"])
+	bb["resource_vpc_config"], _ = json.Marshal(bb["resource_vpc_config"])
+
 	return bb
 }
