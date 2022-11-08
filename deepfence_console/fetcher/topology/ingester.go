@@ -157,10 +157,16 @@ func (tc *TopologyClient) AddCloudResources(cs []types.CloudResource) error {
 	}
 	defer tx.Close()
 
-	fmt.Println("test everything here", cs)
-	if _, err = tx.Run("UNWIND $batch as row MERGE (m:CloudResource{node_id:row.arn, resource_type:row.resource_id}) SET m+=row WITH row UNWIND apoc.convert.fromJsonList(row.security_groups) as group WITH group, row WHERE group IS NOT NULL MERGE (n:SecurityGroup{node_id:group.GroupId, name:group.GroupName}) MERGE (m:CloudResource{node_id:row.arn, resource_type:row.resource_id}) MERGE (n)-[:SECURED]->(m)", map[string]interface{}{"batch": types.ResourceToMaps(cs)}); err != nil {
+	if _, err = tx.Run("UNWIND $batch as row MERGE (m:CloudResource{node_id:row.arn, resource_type:row.resource_id}) SET m+=row", map[string]interface{}{"batch": types.ResourceToMaps(cs)}); err != nil {
 		return err
 	}
+
+	fmt.Println("test everything here", cs)
+	if _, err = tx.Run("UNWIND $batch as row MERGE (m:CloudResource{node_id:row.arn, resource_type:row.resource_id}) SET m+=row WITH row UNWIND apoc.convert.fromJsonList(row.security_groups) as group WITH group, row WHERE group IS NOT NULL AND  row.resource_id = 'aws_ec2_instance' AND group.GroupId IS NOT NULL MERGE (n:SecurityGroup{node_id:group.GroupId, name:group.GroupName}) MERGE (m:CloudResource{node_id:row.arn, resource_type:row.resource_id}) MERGE (n)-[:SECURED]->(m)", map[string]interface{}{"batch": types.ResourceToMaps(cs)}); err != nil {
+		return err
+	}
+
+
 
 	return tx.Commit()
 }
@@ -264,6 +270,7 @@ func (tc *TopologyClient) ComputeThreatGraph() error {
 	if _, err = tx.Run("MATCH (n:Node) -[:CONNECTS]->(m:Node) SET n.sum_cve = COALESCE(n.sum_cve, 0) + COALESCE(m.sum_cve, m.num_cve, 0), n.sum_secrets = COALESCE(n.sum_secrets, 0) + COALESCE(m.sum_secrets, m.num_secrets, 0), n.sum_compliance = COALESCE(n.sum_compliance, 0) + COALESCE(m.sum_compliance, m.num_compliance, 0);", map[string]interface{}{}); err != nil {
 		return err
 	}
+
 
 	if _, err = tx.Run("MATCH (n:SecurityGroup{ CidrIpv4: '0.0.0.0/0'} ) -[:SECURED]-> (m:CloudResource{resource_type:'aws_ec2_instance'}) where n.IsEgress = true MERGE (k:Node {node_id:'out-the-internet'})  MERGE (m)-[:PUBLIC]->(K)", map[string]interface{}{}); err != nil {
 		return err
