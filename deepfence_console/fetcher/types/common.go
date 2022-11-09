@@ -123,18 +123,19 @@ type CloudResource struct {
 	Name                           string           `json:"name"`
 	Region                         string           `json:"region"`
 	ResourceID                     string           `json:"resource_id"`
+	IsEgress					   bool             `json:"is_egress"`
 	InstanceID                     string           `json:"instance_id"`
 	NetworkMode                    string           `json:"network_mode,omitempty"`
 	Scheme                         string           `json:"scheme,omitempty"`
 	DbClusterIdentifier            string           `json:"db_cluster_identifier,omitempty"`
 	ServiceName                    string           `json:"service_name,omitempty"`
 	TaskDefinitionArn              string           `json:"task_definition_arn,omitempty"`
-	PolicyStd                      string           `json:"policy_std,omitempty"`
 	VpcID                          string           `json:"vpc_id,omitempty"`
 	AllowBlobPublicAccess          string           `json:"allow_blob_public_access,omitempty"`
 	PublicAccess                   string           `json:"public_access,omitempty"`
 	GroupId                        string           `json:"group_id,omitempty"`
 	CidrIpv4                       string           `json:"cidr_ipv4,omitempty"`
+	PolicyStd                      *json.RawMessage `json:"policy_std,omitempty"`
 	TaskDefinition                 *json.RawMessage `json:"task_definition,omitempty"`
 	VpcOptions                     *json.RawMessage `json:"vpc_options,omitempty"`
 	Policy                         *json.RawMessage `json:"policy,omitempty"`
@@ -148,6 +149,7 @@ type CloudResource struct {
 	ContainerDefinitions           *json.RawMessage `json:"container_definitions,omitempty"`
 	EventNotificationConfiguration *json.RawMessage `json:"event_notification_configuration,omitempty"`
 	ResourcesVpcConfig             *json.RawMessage `json:"resource_vpc_config,omitempty"`
+	NetworkConfiguration           *json.RawMessage `json:"network_configuration,omitempty"`
 }
 
 type SecretStruct struct {
@@ -241,6 +243,8 @@ func (c *CloudResource) ToMap() map[string]interface{} {
 	bb = convertStructFieldToJSONString(bb, "container_definitions")
 	bb = convertStructFieldToJSONString(bb, "event_notification_configuration")
 	bb = convertStructFieldToJSONString(bb, "resource_vpc_config")
+	bb = convertStructFieldToJSONString(bb, "network_configuration")
+	bb = convertStructFieldToJSONString(bb, "policy_std")
 
 	return bb
 }
