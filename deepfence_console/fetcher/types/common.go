@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 type ComplianceDoc struct {
@@ -121,6 +122,7 @@ type CloudResource struct {
 	ID                             string           `json:"id"`
 	IgnorePublicAcls               bool             `json:"ignore_public_acls,omitempty"`
 	Name                           string           `json:"name"`
+	HostName                       string           `json:"host_name"`
 	Region                         string           `json:"region"`
 	ResourceID                     string           `json:"resource_id"`
 	IsEgress					   bool             `json:"is_egress"`
@@ -135,6 +137,8 @@ type CloudResource struct {
 	PublicAccess                   string           `json:"public_access,omitempty"`
 	GroupId                        string           `json:"group_id,omitempty"`
 	CidrIpv4                       string           `json:"cidr_ipv4,omitempty"`
+	PublicNetworkAccess            string           `json:"public_network_access,omitempty"`
+	StorageAccountName             string           `json:"storage_account_name,omitempty"`
 	PolicyStd                      *json.RawMessage `json:"policy_std,omitempty"`
 	TaskDefinition                 *json.RawMessage `json:"task_definition,omitempty"`
 	VpcOptions                     *json.RawMessage `json:"vpc_options,omitempty"`
@@ -143,7 +147,7 @@ type CloudResource struct {
 	NetworkInterfaces              *json.RawMessage `json:"network_interfaces,omitempty"`
 	IamPolicy                      *json.RawMessage `json:"iam_policy,omitempty"`
 	IpConfiguration                *json.RawMessage `json:"ip_configuration,omitempty"`
-	IngressSettings                *json.RawMessage `json:"ingress_settings,omitempty"`
+	IngressSettings                string `json:"ingress_settings,omitempty"`
 	SecurityGroups                 *json.RawMessage `json:"security_groups,omitempty"`
 	VpcSecurityGroups              *json.RawMessage `json:"vpc_security_groups,omitempty"`
 	ContainerDefinitions           *json.RawMessage `json:"container_definitions,omitempty"`
@@ -237,7 +241,6 @@ func (c *CloudResource) ToMap() map[string]interface{} {
 	bb = convertStructFieldToJSONString(bb, "network_interfaces")
 	bb = convertStructFieldToJSONString(bb, "iam_policy")
 	bb = convertStructFieldToJSONString(bb, "ip_configuration")
-	bb = convertStructFieldToJSONString(bb, "ingress_settings")
 	bb = convertStructFieldToJSONString(bb, "security_groups")
 	bb = convertStructFieldToJSONString(bb, "vpc_security_groups")
 	bb = convertStructFieldToJSONString(bb, "container_definitions")
@@ -245,6 +248,20 @@ func (c *CloudResource) ToMap() map[string]interface{} {
 	bb = convertStructFieldToJSONString(bb, "resource_vpc_config")
 	bb = convertStructFieldToJSONString(bb, "network_configuration")
 	bb = convertStructFieldToJSONString(bb, "policy_std")
+
+	if bb["resource_id"] == "aws_ecs_service" {
+		bb["arn"] = bb["service_name"]
+	}
+	 if strings.Contains("azure",bb["resource_id"].(string)){
+	 	bb["arn"] = bb["name"]
+	 }
+	 if strings.Contains("azure",bb["resource_id"].(string)){
+		bb["arn"] = bb["name"]
+		if(bb["resource_id"].(string) == "azure_compute_virtual_machine") {
+
+			bb["arn"] = bb["vm_id"]
+		}
+	}
 
 	return bb
 }
