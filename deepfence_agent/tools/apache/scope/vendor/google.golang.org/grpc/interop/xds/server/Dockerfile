@@ -29,7 +29,7 @@ RUN go build -tags osusergo,netgo interop/xds/server/server.go
 # Second stage of the build which copies over only the client binary and skips
 # the Go compiler and gRPC repo from the earlier stage. This significantly
 # reduces the docker image size.
-FROM alpine
+FROM alpine:3.18.3
 COPY --from=build /go/src/grpc-go/server .
 ENV GRPC_GO_LOG_VERBOSITY_LEVEL=2
 ENV GRPC_GO_LOG_SEVERITY_LEVEL="info"
