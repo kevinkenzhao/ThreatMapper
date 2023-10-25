@@ -6,7 +6,7 @@ WORKDIR /go/fetcher/
 
 RUN go build fetcher-server.go
 
-FROM alpine:3.15.0
+FROM alpine:3.16.7
 MAINTAINER Deepfence Inc
 LABEL deepfence.role=system
 
