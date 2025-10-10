@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:24.04
 WORKDIR /home/weave
 ADD ./qotd /home/weave/
 EXPOSE 4446
